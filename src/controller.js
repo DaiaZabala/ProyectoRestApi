@@ -26,6 +26,7 @@ class LibroController{
            }
 
     async add(req, res){
+        //AÑADIR LIBROS Y BUSCAR ERRORES 
              const libro = req.body;
             const campos = ['nombre' , 'autor' , 'categoria' , 'aNopublicacion', 'ISBN'];
             const camposExtras = Object.keys(libro).filter(attr => !campos.includes(attr));
@@ -43,6 +44,7 @@ class LibroController{
             }
 
            async update(req, res){
+            //metodo de actualizacion de libros por ISBN
                 const libro = req.body;
                 const isbn_libro = parseInt(libro.ISBN);
             
@@ -58,7 +60,9 @@ class LibroController{
                     res.status(400).json({error: error.message});
                 }
             }        
-                        async delete(req, res) {
+                
+            async delete(req, res) {
+                        //Metodo que permite eliminar un libro de la base de datos por medio del ISBN
                 try {
                     const libro = req.body;
                     const isbn_libro = parseInt(libro.ISBN);
