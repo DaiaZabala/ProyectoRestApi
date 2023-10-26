@@ -42,26 +42,24 @@ class LibroController{
                 }
             }
 
-   
-    async update(req, res){
-        const libro = req.body;
-        const [result] = await pool.query(`UPDATE Libros SET nombre=(?), autor=(?) , categoria=(?), aNopublicacion=(?), ISBN=(?) WHERE id=(?)` , [libro.nombre, libro.autor, libro.categoria, libro.aNopublicacion, libro.ISBN, libro.id] );
-        res.json({"Libros actualizados": result.changedRows});
-    }
+           async update(req, res){
+                const libro = req.body;
+                const isbn_libro = parseInt(libro.ISBN);
+            
+                try {
+                    const [result] = await pool.query(`SELECT * FROM Libros WHERE ISBN=(?)`, [isbn_libro]);
+                    if(result.length === 0){
+                        throw new Error('No se encontro ningun libro con este ISBN');
+                    }
+            
+                    const [updateResult] = await pool.query(`UPDATE Libros SET nombre=?, autor=?, categoria=?,aNopublicacion=?, ISBN=? WHERE ISBN=?`, [libro.nombre, libro.autor, libro.categoria, libro.aNopublicacion, libro.ISBN, isbn_libro]);
+                         res.json({"Libros actualizados": updateResult.changedRows});
+                } catch(error) {
+                    res.status(400).json({error: error.message});
+                }
+            }        
 
-    async delete(req, res){
-        try{
-            const libro = req.body;
-        const [result] = await pool.query(`DELETE FROM Libros WHERE ISBN=(?)`, [libro.ISBN]);
-        res.json({"Libro eliminado": result.affectedRows});
-        } catch(error){ 
-            console.log(error);
-
-            res.status(404).json({ error: 'Error al eliminar el libro'});
-            }      
-    }
-
-    async 
+            
 }
 
 export const libro = new LibroController();
